@@ -5,17 +5,23 @@ import { ReactQueryDevtools } from "react-query/devtools";
 
 import "./App.css";
 
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./components/Home";
+
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <h1>Live Crypto Watch</h1>
+        <Header />
         <Switch>
-          <h4>body</h4>
+          <Route exact path="/">
+            <Home />
+          </Route>
         </Switch>
-        <h2>Footer</h2>
+        <Footer />
       </Router>
 
       <ReactQueryDevtools initialIsOpen={false} />
