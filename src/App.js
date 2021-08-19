@@ -7,7 +7,8 @@ import "./App.css";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Home from "./components/Home";
+import Coins from "./components/Coins";
+import CoinDetails from "./components/CoinDetails";
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,13 @@ const App = () => {
         <Header />
         <Switch>
           <Route exact path="/">
-            <Home />
+            <Coins />
+          </Route>
+          <Route exact path="/coins">
+            <Coins />
+          </Route>
+          <Route exact path="/coins/:id">
+            <CoinDetails />
           </Route>
         </Switch>
         <Footer />
