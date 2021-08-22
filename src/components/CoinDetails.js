@@ -1,7 +1,15 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { Bar, Line } from "react-chartjs-2";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  XAxis,
+  YAxis,
+  Area,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
 
 import { singleCoin, historialPriceData } from "./API/API";
 
@@ -34,7 +42,7 @@ const CoinDetails = () => {
     chartDataLength.push(i);
   }
 
-  console.log(chartDataLength);
+  // console.log(chartDataLength);
   // console.log(dataLength);
 
   //   console.log(data);
@@ -52,46 +60,7 @@ const CoinDetails = () => {
       )}
 
       <div>
-        <Line
-          width={400}
-          height={400}
-          data={{
-            labels: chartDataLength,
-            datasets: [
-              {
-                label: "Price",
-                data: chartData,
-                backgroundColor: [
-                  // "rgba(75, 192, 192, 0.2)",
-                  "rgba(255, 99, 132, 0.2)",
-                  // "rgba(54, 162, 235, 0.2)",
-                  // "rgba(255, 206, 86, 0.2)",
-                  // "rgba(153, 102, 255, 0.2)",
-                  // "rgba(255, 159, 64, 0.2)",
-                ],
-                borderColor: [
-                  // "rgba(75, 192, 192, 1)",
-                  "rgba(255, 206, 86, 1)",
-                  // "rgba(54, 162, 235, 1)",
-                  // "rgba(255, 99, 132, 1)",
-                  // "rgba(153, 102, 255, 1)",
-                  // "rgba(255, 159, 64, 1)",
-                ],
-                borderWidth: 1,
-              },
-            ],
-          }}
-          options={{
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                // alignToPixels: true,
-              },
-              x: {},
-            },
-          }}
-        />
+        <AreaChart></AreaChart>
       </div>
     </>
   );
