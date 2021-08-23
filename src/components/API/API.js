@@ -31,7 +31,7 @@ export const singleCoin = async (id) => {
 export const historialPriceData = async (id) => {
   try {
     const res = await fetch(
-      `${SINGLE_COIN_API_URL}/${id}/market_chart?vs_currency=usd&days=365&interval=daily`
+      `${SINGLE_COIN_API_URL}/${id}/market_chart?vs_currency=usd&days=366&interval=daily`
     );
     const data = await res.json();
 

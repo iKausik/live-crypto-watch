@@ -22,10 +22,14 @@ body {
 body {
   width: 100%;
   font-family: "OpenSans-Regular";
-  /* background-color: #f6f6f6; */
-  color: #2d3035;
+  background-color: #2d3035;
+  color: #fff;
   margin: 0;
   padding: 0;
+}
+body a {
+  text-decoration: none;
+  color: inherit;
 }
 /* main root div */
 #root {
@@ -35,4 +39,13 @@ body {
   justify-content: space-between;
   min-height: 100vh;
   /* border: 1px solid red; */
+}
+
+.tooltip {
+  border-radius: 0.25rem;
+  background: #26313c;
+  color: #fff;
+  padding: 1rem;
+  box-shadow: 15px 30px 40px 5px rgba(0, 0, 0, 0.5);
+  text-align: center;
 }

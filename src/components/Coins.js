@@ -1,3 +1,4 @@
+import { Container } from "@material-ui/core";
 import React from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
@@ -12,7 +13,7 @@ const Coins = () => {
   //   console.log(data);
 
   return (
-    <div>
+    <Container>
       <h1>All Coins</h1>
       {data &&
         data.map((item) => {
@@ -32,7 +33,7 @@ const Coins = () => {
           );
         })}
       {}
-    </div>
+    </Container>
   );
 };
 
