@@ -85,7 +85,7 @@ const CoinDetails = () => {
   //   console.log(allHistoricalData && allHistoricalData.prices);
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="fixed">
       {data && (
         <div>
           <h2>Coin Details</h2>
