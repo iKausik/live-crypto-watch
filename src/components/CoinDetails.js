@@ -15,6 +15,23 @@ import { Container } from "@material-ui/core";
 
 import { singleCoin, historialPriceData } from "./API/API";
 
+// CUSTOM TOOLTIP
+const CustomTooltip = ({ active, payload, label }) => {
+  try {
+    if (active) {
+      return (
+        <div className="tooltip">
+          <h5>{format(parseISO(label), "eeee, d MMM, yyy")}</h5>
+          <p>${payload[0].value.toFixed(2)} USD</p>
+        </div>
+      );
+    }
+    return null;
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
 const CoinDetails = () => {
   const params = useParams();
   const { data } = useQuery(
@@ -85,7 +102,7 @@ const CoinDetails = () => {
   //   console.log(allHistoricalData && allHistoricalData.prices);
 
   return (
-    <Container maxWidth="fixed">
+    <Container maxWidth="lg">
       {data && (
         <div>
           <h2>Coin Details</h2>
@@ -318,23 +335,6 @@ const CoinDetails = () => {
       </div>
     </Container>
   );
-};
-
-// CUSTOM TOOLTIP
-const CustomTooltip = ({ active, payload, label }) => {
-  try {
-    if (active) {
-      return (
-        <div className="tooltip">
-          <h5>{format(parseISO(label), "eeee, d MMM, yyy")}</h5>
-          <p>${payload[0].value.toFixed(2)} USD</p>
-        </div>
-      );
-    }
-    return null;
-  } catch (err) {
-    console.error(err.message);
-  }
 };
 
 export default CoinDetails;
