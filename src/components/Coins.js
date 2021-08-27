@@ -1,5 +1,5 @@
-import { Container } from "@material-ui/core";
 import React from "react";
+import { Container } from "@material-ui/core";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { ResponsiveContainer, AreaChart, Area, CartesianGrid } from "recharts";
@@ -11,54 +11,54 @@ const Coins = () => {
   const { data } = useQuery("AllCoins", getAllCoins, {
     refetchInterval: 1000 * 60,
   });
+  // const [coinId, setCoinId] = useState("bitcoin");
 
-  // const coinId = data && data.map((item) => item.id);
+  // const historicalPrice = useQuery(["HistoricalData", coinId], () =>
+  //   historialPriceData(coinId)
+  // );
+  // const allHistoricalData = historicalPrice.data;
 
-  // let a = [];
-  // data &&
-  //   data.map((item) => {
-  //     return item.id === "bitcoin" ? a.push(item.id) : null;
-  //   });
+  // console.log(historialPriceData("bitcoin"));
 
-  // console.log(a[0]);
+  const coinChart = async (coinId = "bitcoin") => {
+    // try {
+    let allHistoricalData = historialPriceData(coinId);
 
-  const coinChart = (currentId) => {
+    let priceData = [];
+    // const runIt = async () => {
     try {
-      // let historicalPrice;
-      let storeId = [];
-      let allHistoricalData = historialPriceData(currentId);
-      let priceData = [];
-
-      data &&
-        data.map((item) => {
-          item.id === currentId && storeId.push(item.id);
-          return storeId[0] === currentId
-            ? allHistoricalData &&
-                allHistoricalData.prices.map((layer1) => {
-                  return layer1.map((num) => {
-                    return !Number.isInteger(num) ? priceData.push(num) : null;
-                  });
-                })
-            : null;
+      // allHistoricalData &&
+      allHistoricalData.prices.map((layer1) => {
+        return layer1.map((num) => {
+          return !Number.isInteger(num) ? priceData.push(num) : null;
         });
-
-      // 365 DAYS
-      let allData365 = [];
-      let dataReverse = priceData.reverse();
-      for (let d = 365; d >= 0; d--) {
-        allData365.push({
-          date: subDays(new Date(), d).toISOString().substr(0, 10),
-          value: dataReverse.slice(0, 366)[d],
-        });
-      }
-
-      return allData365;
+      });
     } catch (err) {
       console.error(err.message);
     }
+    // };
+    // runIt();
+
+    const dataReverse = priceData.reverse();
+
+    // 365 DAYS
+    let allData365 = [];
+    for (let d = 365; d >= 0; d--) {
+      allData365.push({
+        date: subDays(new Date(), d).toISOString().substr(0, 10),
+        value: dataReverse.slice(0, 366)[d],
+      });
+    }
+
+    // console.log(allData365);
+    return allData365;
+    // } catch (err) {
+    //   console.error(err.message);
+    // }
   };
 
   // console.log(coinChart());
+  coinChart("ethereum");
 
   return (
     <Container maxWidth="lg">
