@@ -1,9 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <div>
-      <h1>Live Crypto Watch</h1>
+      <Link to="/">
+        <p className="title">LIVE CRYPTO WATCH</p>
+      </Link>
     </div>
   );
 };

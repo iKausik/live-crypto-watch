@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import {
@@ -11,9 +11,47 @@ import {
   CartesianGrid,
 } from "recharts";
 import { format, parseISO, subDays } from "date-fns";
-import { Container } from "@material-ui/core";
+import { Container, Tabs, Tab, Typography, Box } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 import { singleCoin, historialPriceData } from "./API/API";
+
+//
+// TABS
+const TabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={5}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+};
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+const a11yProps = (index) => {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+};
+//
+//
 
 // CUSTOM TOOLTIP
 const CustomTooltip = ({ active, payload, label }) => {
@@ -34,15 +72,20 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const CoinDetails = () => {
   const params = useParams();
+  const [value, setValue] = useState(0);
   const { data } = useQuery(
     ["SingleCoinDetails", params.id],
     () => singleCoin(params.id),
     { refetchInterval: 1000 * 60 }
   );
-
   const historicalPrice = useQuery(["HistoricalData", params.id], () =>
     historialPriceData(params.id)
   );
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   const allHistoricalData = historicalPrice.data;
 
   let priceData = [];
@@ -103,235 +146,280 @@ const CoinDetails = () => {
 
   return (
     <Container maxWidth="lg">
-      {data && (
-        <div>
-          <h2>Coin Details</h2>
-          <div>{data.name}</div>
-          <div>{data.symbol}</div>
-          <div>{data.market_data.current_price.usd}</div>
+      <div className="mainContainer">
+        <div className="section1">
+          {/* ALL DETAILS */}
+          <div className="allDetails">
+            {data && (
+              <div className="allInfo">
+                <div className="infoDetail">
+                  <div className="info1">
+                    <img
+                      src={data.image.large}
+                      alt={data.name}
+                      width={60}
+                      height={60}
+                    />
+                  </div>
+                  <div className="info2">
+                    <p
+                      style={{
+                        fontFamily: "OpenSans-Bold",
+                        letterSpacing: "2px",
+                        fontSize: "1.6em",
+                      }}
+                    >
+                      {data.name}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "OpenSans-Light",
+                        letterSpacing: "2px",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {data.symbol.toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontFamily: "OpenSans-Bold",
+                    letterSpacing: "2px",
+                    fontSize: "1.6em",
+                  }}
+                >
+                  ${data.market_data.current_price.usd}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ALL CHARTS */}
+          <div className="allCharts">
+            {/* TOGGLE BUTTON */}
+            <div className="allBtns">
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="simple tabs"
+              >
+                <Tab label="1W" {...a11yProps(0)} />
+                <Tab label="1M" {...a11yProps(1)} />
+                <Tab label="3M" {...a11yProps(2)} />
+                <Tab label="6M" {...a11yProps(3)} />
+                <Tab label="1Y" {...a11yProps(4)} />
+              </Tabs>
+            </div>
+            {/* 7 DAYS */}
+            <TabPanel value={value} index={0}>
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={allData7}>
+                  <defs>
+                    <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
+                    </linearGradient>
+                  </defs>
+
+                  <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickFormatter={(str) => {
+                      const date = parseISO(str);
+                      if (date.getDate() % 1 === 0) {
+                        return format(date, "d MMM yy");
+                      }
+                      return "";
+                    }}
+                  />
+
+                  <YAxis
+                    dataKey="value"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickCount={6}
+                    tickFormatter={(number) => `$${number.toFixed(0)}`}
+                  />
+
+                  <Tooltip content={<CustomTooltip />} />
+
+                  <CartesianGrid opacity={0.1} vertical={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </TabPanel>
+
+            {/* 30 DAYS */}
+            <TabPanel value={value} index={1}>
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={allData30}>
+                  <defs>
+                    <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
+                    </linearGradient>
+                  </defs>
+
+                  <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickFormatter={(str) => {
+                      const date = parseISO(str);
+                      return format(date, "d MMM yy");
+                    }}
+                  />
+
+                  <YAxis
+                    dataKey="value"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickCount={6}
+                    tickFormatter={(number) => `$${number.toFixed(0)}`}
+                  />
+
+                  <Tooltip content={<CustomTooltip />} />
+
+                  <CartesianGrid opacity={0.1} vertical={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </TabPanel>
+
+            {/* 90 DAYS */}
+            <TabPanel value={value} index={2}>
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={allData90}>
+                  <defs>
+                    <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
+                    </linearGradient>
+                  </defs>
+
+                  <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickFormatter={(str) => {
+                      const date = parseISO(str);
+                      return format(date, "d MMM yy");
+                    }}
+                  />
+
+                  <YAxis
+                    dataKey="value"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickCount={6}
+                    tickFormatter={(number) => `$${number.toFixed(0)}`}
+                  />
+
+                  <Tooltip content={<CustomTooltip />} />
+
+                  <CartesianGrid opacity={0.1} vertical={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </TabPanel>
+
+            {/* 180 DAYS */}
+            <TabPanel value={value} index={3}>
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={allData180}>
+                  <defs>
+                    <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
+                    </linearGradient>
+                  </defs>
+
+                  <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickFormatter={(str) => {
+                      const date = parseISO(str);
+                      return format(date, "d MMM yy");
+                    }}
+                  />
+
+                  <YAxis
+                    dataKey="value"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickCount={6}
+                    tickFormatter={(number) => `$${number.toFixed(0)}`}
+                  />
+
+                  <Tooltip content={<CustomTooltip />} />
+
+                  <CartesianGrid opacity={0.1} vertical={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </TabPanel>
+
+            {/* 365 DAYS */}
+            <TabPanel value={value} index={4}>
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={allData365}>
+                  <defs>
+                    <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
+                    </linearGradient>
+                  </defs>
+
+                  <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickFormatter={(str) => {
+                      const date = parseISO(str);
+                      return format(date, "d MMM yy");
+                    }}
+                  />
+
+                  <YAxis
+                    dataKey="value"
+                    axisLine={false}
+                    tickLine={false}
+                    fontSize="0.8em"
+                    tickCount={6}
+                    tickFormatter={(number) => `$${number.toFixed(0)}`}
+                  />
+
+                  <Tooltip content={<CustomTooltip />} />
+
+                  <CartesianGrid opacity={0.1} vertical={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </TabPanel>
+          </div>
         </div>
-      )}
 
-      {/* 7 DAYS */}
-      <div>
-        <h2>1 WEEK</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={allData7}>
-            <defs>
-              <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00cc00" stopOpacity={0.4} />
-                <stop offset="75%" stopColor="00cc00" stopOpacity={0.5} />
-              </linearGradient>
-            </defs>
-
-            <Area dataKey="value" stroke="#00cc00" fill="url(#color)" />
-
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(str) => {
-                const date = parseISO(str);
-                if (date.getDate() % 1 === 0) {
-                  return format(date, "MMM, d");
-                }
-                return "";
-              }}
-            />
-
-            <YAxis
-              dataKey="value"
-              axisLine={false}
-              tickLine={false}
-              tickCount={8}
-              tickFormatter={(number) => `$${number.toFixed(0)}`}
-            />
-
-            <Tooltip content={<CustomTooltip />} />
-
-            <CartesianGrid opacity={0.1} vertical={false} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-
-      <br />
-      <br />
-
-      {/* 30 DAYS */}
-      <div>
-        <h2>1 MONTH</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={allData30}>
-            <defs>
-              <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00cc00" stopOpacity={0.4} />
-                <stop offset="75%" stopColor="00cc00" stopOpacity={0.5} />
-              </linearGradient>
-            </defs>
-
-            <Area dataKey="value" stroke="#00cc00" fill="url(#color)" />
-
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(str) => {
-                const date = parseISO(str);
-                if (date.getDate() % 7 === 0) {
-                  return format(date, "MMM, d");
-                }
-                return "";
-              }}
-            />
-
-            <YAxis
-              dataKey="value"
-              axisLine={false}
-              tickLine={false}
-              tickCount={8}
-              tickFormatter={(number) => `$${number.toFixed(0)}`}
-            />
-
-            <Tooltip content={<CustomTooltip />} />
-
-            <CartesianGrid opacity={0.1} vertical={false} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-
-      <br />
-      <br />
-
-      {/* 90 DAYS */}
-      <div>
-        <h2>3 MONTHS</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={allData90}>
-            <defs>
-              <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00cc00" stopOpacity={0.4} />
-                <stop offset="75%" stopColor="00cc00" stopOpacity={0.5} />
-              </linearGradient>
-            </defs>
-
-            <Area dataKey="value" stroke="#00cc00" fill="url(#color)" />
-
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(str) => {
-                const date = parseISO(str);
-                if (date.getDate() % 30 === 0) {
-                  return format(date, "MMM, d");
-                }
-                return "";
-              }}
-            />
-
-            <YAxis
-              dataKey="value"
-              axisLine={false}
-              tickLine={false}
-              tickCount={8}
-              tickFormatter={(number) => `$${number.toFixed(0)}`}
-            />
-
-            <Tooltip content={<CustomTooltip />} />
-
-            <CartesianGrid opacity={0.1} vertical={false} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-
-      <br />
-      <br />
-
-      {/* 180 DAYS */}
-      <div>
-        <h2>6 MONTHS</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={allData180}>
-            <defs>
-              <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00cc00" stopOpacity={0.4} />
-                <stop offset="75%" stopColor="00cc00" stopOpacity={0.5} />
-              </linearGradient>
-            </defs>
-
-            <Area dataKey="value" stroke="#00cc00" fill="url(#color)" />
-
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(str) => {
-                const date = parseISO(str);
-                if (date.getDate() % 30 === 0) {
-                  return format(date, "MMM, d");
-                }
-                return "";
-              }}
-            />
-
-            <YAxis
-              dataKey="value"
-              axisLine={false}
-              tickLine={false}
-              tickCount={8}
-              tickFormatter={(number) => `$${number.toFixed(0)}`}
-            />
-
-            <Tooltip content={<CustomTooltip />} />
-
-            <CartesianGrid opacity={0.1} vertical={false} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-
-      <br />
-      <br />
-
-      {/* 365 DAYS */}
-      <div>
-        <h2>1 YEAR</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={allData365}>
-            <defs>
-              <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00cc00" stopOpacity={0.4} />
-                <stop offset="75%" stopColor="00cc00" stopOpacity={0.5} />
-              </linearGradient>
-            </defs>
-
-            <Area dataKey="value" stroke="#00cc00" fill="url(#color)" />
-
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(str) => {
-                const date = parseISO(str);
-                if (date.getDate() % 30 === 0) {
-                  return format(date, "MMM, d");
-                }
-                return "";
-              }}
-            />
-
-            <YAxis
-              dataKey="value"
-              axisLine={false}
-              tickLine={false}
-              tickCount={8}
-              tickFormatter={(number) => `$${number.toFixed(0)}`}
-            />
-
-            <Tooltip content={<CustomTooltip />} />
-
-            <CartesianGrid opacity={0.1} vertical={false} />
-          </AreaChart>
-        </ResponsiveContainer>
+        {/* SIDEBAR */}
+        <div className="section2">
+          <h3>Select to Compare</h3>
+        </div>
       </div>
     </Container>
   );
