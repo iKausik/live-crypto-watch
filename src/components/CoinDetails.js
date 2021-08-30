@@ -15,6 +15,7 @@ import { Container, Tabs, Tab, Typography, Box } from "@material-ui/core";
 import PropTypes from "prop-types";
 
 import { singleCoin, historialPriceData } from "./API/API";
+import CoinsSidebar from "./CoinsSidebar";
 
 //
 // TABS
@@ -419,6 +420,9 @@ const CoinDetails = () => {
         {/* SIDEBAR */}
         <div className="section2">
           <h3>Select to Compare</h3>
+          <div className="sidebarContent">
+            <CoinsSidebar />
+          </div>
         </div>
       </div>
     </Container>
