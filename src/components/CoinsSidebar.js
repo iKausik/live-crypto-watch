@@ -6,7 +6,7 @@ import { subDays } from "date-fns";
 
 import { getAllCoins, historialPriceData } from "./API/API";
 
-const CoinsSidebar = () => {
+const CoinsSidebar = ({ currentPage }) => {
   const { data } = useQuery("AllCoins", getAllCoins, {
     refetchInterval: 1000 * 60,
   });
@@ -141,87 +141,89 @@ const CoinsSidebar = () => {
         {data &&
           data.map((item) => {
             return (
-              <div key={item.id}>
-                {localStorage.setItem(data.indexOf(item), item.id)}
-                <Link to={`/coins/${item.id}`}>
-                  <div className="coinItem">
-                    {/* COIN CHART */}
-                    <div className="coinChart">
-                      {/* 365 DAYS */}
-                      <ResponsiveContainer width="100%" height={200}>
-                        <AreaChart data={coinChart(data.indexOf(item))}>
-                          <defs>
-                            <linearGradient
-                              id="color"
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                            >
-                              <stop
-                                offset="0%"
-                                stopColor="#f6f6f6"
-                                stopOpacity={0.8}
-                              />
-                              <stop
-                                offset="75%"
-                                stopColor="f6f6f6"
-                                stopOpacity={0.6}
-                              />
-                            </linearGradient>
-                          </defs>
-                          <Area
-                            dataKey="value"
-                            stroke="#000000"
-                            fill="url(#color)"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
+              item.id !== currentPage && (
+                <div key={item.id}>
+                  {localStorage.setItem(data.indexOf(item), item.id)}
+                  <Link to={`/coins/${item.id}`}>
+                    <div className="coinItem">
+                      {/* COIN CHART */}
+                      <div className="coinChart">
+                        {/* 365 DAYS */}
+                        <ResponsiveContainer width="100%" height={200}>
+                          <AreaChart data={coinChart(data.indexOf(item))}>
+                            <defs>
+                              <linearGradient
+                                id="color"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                              >
+                                <stop
+                                  offset="0%"
+                                  stopColor="#f6f6f6"
+                                  stopOpacity={0.8}
+                                />
+                                <stop
+                                  offset="75%"
+                                  stopColor="f6f6f6"
+                                  stopOpacity={0.6}
+                                />
+                              </linearGradient>
+                            </defs>
+                            <Area
+                              dataKey="value"
+                              stroke="#000000"
+                              fill="url(#color)"
+                            />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </div>
 
-                    {/* COIN INFO */}
-                    <div className="coinInfo">
-                      <div>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          width="50"
-                          height="50"
-                        />
-                        <div style={{ marginLeft: "1em", textAlign: "left" }}>
-                          <div
-                            style={{
-                              fontFamily: "OpenSans-Bold",
-                              letterSpacing: "1px",
-                              fontSize: "1.2em",
-                            }}
-                          >
-                            {item.symbol.toUpperCase()}
-                          </div>
-                          <div
-                            style={{
-                              fontFamily: "OpenSans-Light",
-                              letterSpacing: "1px",
-                              fontSize: "0.9em",
-                            }}
-                          >
-                            {item.name}
+                      {/* COIN INFO */}
+                      <div className="coinInfo">
+                        <div>
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            width="50"
+                            height="50"
+                          />
+                          <div style={{ marginLeft: "1em", textAlign: "left" }}>
+                            <div
+                              style={{
+                                fontFamily: "OpenSans-Bold",
+                                letterSpacing: "1px",
+                                fontSize: "1.2em",
+                              }}
+                            >
+                              {item.symbol.toUpperCase()}
+                            </div>
+                            <div
+                              style={{
+                                fontFamily: "OpenSans-Light",
+                                letterSpacing: "1px",
+                                fontSize: "0.9em",
+                              }}
+                            >
+                              {item.name}
+                            </div>
                           </div>
                         </div>
+                        <p
+                          style={{
+                            fontFamily: "OpenSans-Regular",
+                            letterSpacing: "2px",
+                            fontSize: "1.2em",
+                          }}
+                        >
+                          ${item.current_price.toFixed(2)}
+                        </p>
                       </div>
-                      <p
-                        style={{
-                          fontFamily: "OpenSans-Regular",
-                          letterSpacing: "2px",
-                          fontSize: "1.2em",
-                        }}
-                      >
-                        ${item.current_price.toFixed(2)}
-                      </p>
                     </div>
-                  </div>
-                </Link>
-              </div>
+                  </Link>
+                </div>
+              )
             );
           })}
       </div>

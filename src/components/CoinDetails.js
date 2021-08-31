@@ -419,9 +419,11 @@ const CoinDetails = () => {
 
         {/* SIDEBAR */}
         <div className="section2">
-          <h3>Select to Compare</h3>
+          <h3 style={{ color: "#cccccc", letterSpacing: "1px" }}>
+            SELECT TO COMPARE
+          </h3>
           <div className="sidebarContent">
-            <CoinsSidebar />
+            <CoinsSidebar currentPage={params.id} />
           </div>
         </div>
       </div>
