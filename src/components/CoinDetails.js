@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -7,11 +8,12 @@ import {
   XAxis,
   YAxis,
   Area,
+  Legend,
   Tooltip,
   CartesianGrid,
 } from "recharts";
 import { format, parseISO, subDays } from "date-fns";
-import { Container, Tabs, Tab, Typography, Box } from "@material-ui/core";
+import { Container, Tabs, Tab, Box } from "@material-ui/core";
 import PropTypes from "prop-types";
 
 import { singleCoin, historialPriceData } from "./API/API";
@@ -32,7 +34,7 @@ const TabPanel = (props) => {
     >
       {value === index && (
         <Box p={5}>
-          <Typography>{children}</Typography>
+          <span>{children}</span>
         </Box>
       )}
     </div>
@@ -62,6 +64,9 @@ const CustomTooltip = ({ active, payload, label }) => {
         <div className="tooltip">
           <h5>{format(parseISO(label), "eeee, d MMM, yyy")}</h5>
           <p>${payload[0].value.toFixed(2)} USD</p>
+          {/* <p>${payload[1].value1.toFixed(2)} USD</p>
+          <p>${payload[2].value2.toFixed(2)} USD</p>
+          <p>${payload[3].value3.toFixed(2)} USD</p> */}
         </div>
       );
     }
@@ -70,6 +75,9 @@ const CustomTooltip = ({ active, payload, label }) => {
     console.error(err.message);
   }
 };
+
+// ID TO COMPARE
+let idList = [];
 
 const CoinDetails = () => {
   const params = useParams();
@@ -82,12 +90,24 @@ const CoinDetails = () => {
   const historicalPrice = useQuery(["HistoricalData", params.id], () =>
     historialPriceData(params.id)
   );
+  const historicalPrice1 = useQuery(["HistoricalData1", idList[0]], () =>
+    historialPriceData(idList[0])
+  );
+  const historicalPrice2 = useQuery(["HistoricalData2", idList[1]], () =>
+    historialPriceData(idList[1])
+  );
+  const historicalPrice3 = useQuery(["HistoricalData3", idList[2]], () =>
+    historialPriceData(idList[2])
+  );
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   const allHistoricalData = historicalPrice.data;
+  const allHistoricalData1 = historicalPrice1.data;
+  const allHistoricalData2 = historicalPrice2.data;
+  const allHistoricalData3 = historicalPrice3.data;
 
   let priceData = [];
   allHistoricalData &&
@@ -96,8 +116,46 @@ const CoinDetails = () => {
         return !Number.isInteger(num) ? priceData.push(num) : null;
       });
     });
+  let priceData1 = [];
+  try {
+    allHistoricalData1 &&
+      allHistoricalData1.prices.map((layer1) => {
+        return layer1.map((num) => {
+          return !Number.isInteger(num) ? priceData1.push(num) : null;
+        });
+      });
+  } catch (err) {
+    console.error(err.message);
+  }
+
+  let priceData2 = [];
+  try {
+    allHistoricalData2 &&
+      allHistoricalData2.prices.map((layer1) => {
+        return layer1.map((num) => {
+          return !Number.isInteger(num) ? priceData2.push(num) : null;
+        });
+      });
+  } catch (err) {
+    console.error(err.message);
+  }
+
+  let priceData3 = [];
+  try {
+    allHistoricalData3 &&
+      allHistoricalData3.prices.map((layer1) => {
+        return layer1.map((num) => {
+          return !Number.isInteger(num) ? priceData3.push(num) : null;
+        });
+      });
+  } catch (err) {
+    console.error(err.message);
+  }
 
   const dataReverse = priceData.reverse();
+  // const dataReverse1 = priceData1.reverse();
+  // const dataReverse2 = priceData2.reverse();
+  // const dataReverse3 = priceData3.reverse();
 
   // 7 DAYS
   let allData7 = [];
@@ -105,8 +163,14 @@ const CoinDetails = () => {
     allData7.push({
       date: subDays(new Date(), d).toISOString().substr(0, 10),
       value: dataReverse.slice(0, 8)[d],
+      // value1: dataReverse1.slice(0, 8)[d],
+      // value2: dataReverse2.slice(0, 8)[d],
+      // value3: dataReverse3.slice(0, 8)[d],
     });
   }
+
+  console.log(allData7);
+
   // 30 DAYS
   let allData30 = [];
   for (let d = 30; d >= 0; d--) {
@@ -139,6 +203,36 @@ const CoinDetails = () => {
       value: dataReverse.slice(0, 366)[d],
     });
   }
+
+  // TOGGLE COMPARE COINS
+  const handleToggleToCompare = (itemId) => {
+    try {
+      const item = document.getElementById(`displayNone${itemId}`);
+      const instruction = document.getElementById("selectInstruction");
+
+      if (idList.length < 3 && item.className === "displayNone") {
+        item.className = "toggleDiv";
+        idList.push(itemId);
+      } else if (item.className === "toggleDiv") {
+        item.className = "displayNone";
+        idList.splice(idList.indexOf(itemId), 1);
+      }
+
+      if (idList.length === 1) {
+        instruction.innerHTML = "You have 2 left";
+      } else if (idList.length === 2) {
+        instruction.innerHTML = "You have 1 left";
+      } else if (idList.length === 3) {
+        instruction.innerHTML = "You have 0 left";
+      } else {
+        instruction.innerHTML = "You can select max 3";
+      }
+
+      // console.log(idList);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   // console.log(dataReverse.slice(0, 31));
   // console.log(priceData);
@@ -224,6 +318,9 @@ const CoinDetails = () => {
                   </defs>
 
                   <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+                  {/* <Area dataKey="value1" stroke="#6600ff" fill="url(#color)" />
+                  <Area dataKey="value2" stroke="#ff00ff" fill="url(#color)" />
+                  <Area dataKey="value3" stroke="#ff0066" fill="url(#color)" /> */}
 
                   <XAxis
                     dataKey="date"
@@ -419,11 +516,21 @@ const CoinDetails = () => {
 
         {/* SIDEBAR */}
         <div className="section2">
-          <h3 style={{ color: "#cccccc", letterSpacing: "1px" }}>
+          <h3
+            style={{
+              color: "#cccccc",
+              letterSpacing: "1px",
+              marginBottom: "0",
+            }}
+          >
             SELECT TO COMPARE
           </h3>
+          <p id="selectInstruction">You can select max 3</p>
           <div className="sidebarContent">
-            <CoinsSidebar currentPage={params.id} />
+            <CoinsSidebar
+              currentPage={params.id}
+              handleToggle={(id) => handleToggleToCompare(id)}
+            />
           </div>
         </div>
       </div>
