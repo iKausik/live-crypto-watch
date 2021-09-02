@@ -96,10 +96,6 @@ const CoinDetails = () => {
     { refetchInterval: 1000 * 60 }
   );
 
-  // const [coinOne, setCoinOne] = useState();
-  // const [coinTwo, setCoinTwo] = useState(coinForCompare2(compareCoin2));
-  // const [coinThree, setCoinThree] = useState(coinForCompare3(compareCoin3));
-
   const historicalPrice = useQuery(["HistoricalData", params.id], () =>
     historialPriceData(params.id)
   );
@@ -191,6 +187,9 @@ const CoinDetails = () => {
     allData30.push({
       date: subDays(new Date(), d).toISOString().substr(0, 10),
       value: dataReverse.slice(0, 31)[d],
+      value1: dataReverse1.slice(0, 31)[d],
+      value2: dataReverse2.slice(0, 31)[d],
+      value3: dataReverse3.slice(0, 31)[d],
     });
   }
   // 90 DAYS
@@ -199,6 +198,9 @@ const CoinDetails = () => {
     allData90.push({
       date: subDays(new Date(), d).toISOString().substr(0, 10),
       value: dataReverse.slice(0, 91)[d],
+      value1: dataReverse1.slice(0, 91)[d],
+      value2: dataReverse2.slice(0, 91)[d],
+      value3: dataReverse3.slice(0, 91)[d],
     });
   }
   // 180 DAYS
@@ -207,6 +209,9 @@ const CoinDetails = () => {
     allData180.push({
       date: subDays(new Date(), d).toISOString().substr(0, 10),
       value: dataReverse.slice(0, 181)[d],
+      value1: dataReverse1.slice(0, 181)[d],
+      value2: dataReverse2.slice(0, 181)[d],
+      value3: dataReverse3.slice(0, 181)[d],
     });
   }
   // 365 DAYS
@@ -215,6 +220,9 @@ const CoinDetails = () => {
     allData365.push({
       date: subDays(new Date(), d).toISOString().substr(0, 10),
       value: dataReverse.slice(0, 366)[d],
+      value1: dataReverse1.slice(0, 366)[d],
+      value2: dataReverse2.slice(0, 366)[d],
+      value3: dataReverse3.slice(0, 366)[d],
     });
   }
 
@@ -333,12 +341,24 @@ const CoinDetails = () => {
                       <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
                       <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
                     </linearGradient>
+                    <linearGradient id="color1" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ff0066" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ff0066" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#9900ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="9900ff" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color3" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ffcc00" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ffcc00" stopOpacity={0.5} />
+                    </linearGradient>
                   </defs>
 
                   <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
-                  <Area dataKey="value1" stroke="#6600ff" fill="url(#color)" />
-                  <Area dataKey="value2" stroke="#ff00ff" fill="url(#color)" />
-                  <Area dataKey="value3" stroke="#ff0066" fill="url(#color)" />
+                  <Area dataKey="value1" stroke="#ff0066" fill="url(#color1)" />
+                  <Area dataKey="value2" stroke="#9900ff" fill="url(#color2)" />
+                  <Area dataKey="value3" stroke="#ffcc00" fill="url(#color3)" />
 
                   <XAxis
                     dataKey="date"
@@ -379,9 +399,24 @@ const CoinDetails = () => {
                       <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
                       <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
                     </linearGradient>
+                    <linearGradient id="color1" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ff0066" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ff0066" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#9900ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="9900ff" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color3" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ffcc00" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ffcc00" stopOpacity={0.5} />
+                    </linearGradient>
                   </defs>
 
                   <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+                  <Area dataKey="value1" stroke="#ff0066" fill="url(#color1)" />
+                  <Area dataKey="value2" stroke="#9900ff" fill="url(#color2)" />
+                  <Area dataKey="value3" stroke="#ffcc00" fill="url(#color3)" />
 
                   <XAxis
                     dataKey="date"
@@ -395,7 +430,7 @@ const CoinDetails = () => {
                   />
 
                   <YAxis
-                    dataKey="value"
+                    dataKey={Math.max("value", "value1", "value2", "value3")}
                     axisLine={false}
                     tickLine={false}
                     fontSize="0.8em"
@@ -419,9 +454,24 @@ const CoinDetails = () => {
                       <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
                       <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
                     </linearGradient>
+                    <linearGradient id="color1" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ff0066" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ff0066" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#9900ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="9900ff" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color3" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ffcc00" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ffcc00" stopOpacity={0.5} />
+                    </linearGradient>
                   </defs>
 
                   <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+                  <Area dataKey="value1" stroke="#ff0066" fill="url(#color1)" />
+                  <Area dataKey="value2" stroke="#9900ff" fill="url(#color2)" />
+                  <Area dataKey="value3" stroke="#ffcc00" fill="url(#color3)" />
 
                   <XAxis
                     dataKey="date"
@@ -435,7 +485,7 @@ const CoinDetails = () => {
                   />
 
                   <YAxis
-                    dataKey="value"
+                    dataKey={Math.max("value", "value1", "value2", "value3")}
                     axisLine={false}
                     tickLine={false}
                     fontSize="0.8em"
@@ -459,9 +509,24 @@ const CoinDetails = () => {
                       <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
                       <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
                     </linearGradient>
+                    <linearGradient id="color1" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ff0066" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ff0066" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#9900ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="9900ff" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color3" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ffcc00" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ffcc00" stopOpacity={0.5} />
+                    </linearGradient>
                   </defs>
 
                   <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+                  <Area dataKey="value1" stroke="#ff0066" fill="url(#color1)" />
+                  <Area dataKey="value2" stroke="#9900ff" fill="url(#color2)" />
+                  <Area dataKey="value3" stroke="#ffcc00" fill="url(#color3)" />
 
                   <XAxis
                     dataKey="date"
@@ -475,7 +540,7 @@ const CoinDetails = () => {
                   />
 
                   <YAxis
-                    dataKey="value"
+                    dataKey={Math.max("value", "value1", "value2", "value3")}
                     axisLine={false}
                     tickLine={false}
                     fontSize="0.8em"
@@ -499,9 +564,24 @@ const CoinDetails = () => {
                       <stop offset="0%" stopColor="#0000ff" stopOpacity={0.4} />
                       <stop offset="75%" stopColor="0000ff" stopOpacity={0.5} />
                     </linearGradient>
+                    <linearGradient id="color1" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ff0066" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ff0066" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#9900ff" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="9900ff" stopOpacity={0.5} />
+                    </linearGradient>
+                    <linearGradient id="color3" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ffcc00" stopOpacity={0.4} />
+                      <stop offset="75%" stopColor="ffcc00" stopOpacity={0.5} />
+                    </linearGradient>
                   </defs>
 
                   <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
+                  <Area dataKey="value1" stroke="#ff0066" fill="url(#color1)" />
+                  <Area dataKey="value2" stroke="#9900ff" fill="url(#color2)" />
+                  <Area dataKey="value3" stroke="#ffcc00" fill="url(#color3)" />
 
                   <XAxis
                     dataKey="date"
@@ -515,7 +595,7 @@ const CoinDetails = () => {
                   />
 
                   <YAxis
-                    dataKey="value"
+                    dataKey={Math.max("value", "value1", "value2", "value3")}
                     axisLine={false}
                     tickLine={false}
                     fontSize="0.8em"
