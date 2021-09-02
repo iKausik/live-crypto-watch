@@ -130,7 +130,8 @@ body a {
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: auto auto;
-  height: 40em;
+  /* max-height: 70em; */
+  height: 70em;
   width: 100%;
 }
 .section1 {

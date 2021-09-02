@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -8,7 +7,6 @@ import {
   XAxis,
   YAxis,
   Area,
-  Legend,
   Tooltip,
   CartesianGrid,
 } from "recharts";
@@ -18,6 +16,11 @@ import PropTypes from "prop-types";
 
 import { singleCoin, historialPriceData } from "./API/API";
 import CoinsSidebar from "./CoinsSidebar";
+import {
+  Coin1ToCompare,
+  Coin2ToCompare,
+  Coin3ToCompare,
+} from "./CoinsToCompare";
 
 //
 // TABS
@@ -64,9 +67,9 @@ const CustomTooltip = ({ active, payload, label }) => {
         <div className="tooltip">
           <h5>{format(parseISO(label), "eeee, d MMM, yyy")}</h5>
           <p>${payload[0].value.toFixed(2)} USD</p>
-          {/* <p>${payload[1].value1.toFixed(2)} USD</p>
-          <p>${payload[2].value2.toFixed(2)} USD</p>
-          <p>${payload[3].value3.toFixed(2)} USD</p> */}
+          {payload[1] ? <p>${payload[1].value.toFixed(2)} USD</p> : null}
+          {payload[2] ? <p>${payload[2].value.toFixed(2)} USD</p> : null}
+          {payload[3] ? <p>${payload[3].value.toFixed(2)} USD</p> : null}
         </div>
       );
     }
@@ -82,22 +85,32 @@ let idList = [];
 const CoinDetails = () => {
   const params = useParams();
   const [value, setValue] = useState(0);
+
+  const [select1, setSelect1] = useState();
+  const [select2, setSelect2] = useState();
+  const [select3, setSelect3] = useState();
+
   const { data } = useQuery(
     ["SingleCoinDetails", params.id],
     () => singleCoin(params.id),
     { refetchInterval: 1000 * 60 }
   );
+
+  // const [coinOne, setCoinOne] = useState();
+  // const [coinTwo, setCoinTwo] = useState(coinForCompare2(compareCoin2));
+  // const [coinThree, setCoinThree] = useState(coinForCompare3(compareCoin3));
+
   const historicalPrice = useQuery(["HistoricalData", params.id], () =>
     historialPriceData(params.id)
   );
-  const historicalPrice1 = useQuery(["HistoricalData1", idList[0]], () =>
-    historialPriceData(idList[0])
+  const historicalPrice1 = useQuery(["HistoricalData1", select1], () =>
+    historialPriceData(select1)
   );
-  const historicalPrice2 = useQuery(["HistoricalData2", idList[1]], () =>
-    historialPriceData(idList[1])
+  const historicalPrice2 = useQuery(["HistoricalData2", select2], () =>
+    historialPriceData(select2)
   );
-  const historicalPrice3 = useQuery(["HistoricalData3", idList[2]], () =>
-    historialPriceData(idList[2])
+  const historicalPrice3 = useQuery(["HistoricalData3", select3], () =>
+    historialPriceData(select3)
   );
 
   const handleChange = (event, newValue) => {
@@ -116,6 +129,7 @@ const CoinDetails = () => {
         return !Number.isInteger(num) ? priceData.push(num) : null;
       });
     });
+
   let priceData1 = [];
   try {
     allHistoricalData1 &&
@@ -153,9 +167,9 @@ const CoinDetails = () => {
   }
 
   const dataReverse = priceData.reverse();
-  // const dataReverse1 = priceData1.reverse();
-  // const dataReverse2 = priceData2.reverse();
-  // const dataReverse3 = priceData3.reverse();
+  const dataReverse1 = priceData1.reverse();
+  const dataReverse2 = priceData2.reverse();
+  const dataReverse3 = priceData3.reverse();
 
   // 7 DAYS
   let allData7 = [];
@@ -163,13 +177,13 @@ const CoinDetails = () => {
     allData7.push({
       date: subDays(new Date(), d).toISOString().substr(0, 10),
       value: dataReverse.slice(0, 8)[d],
-      // value1: dataReverse1.slice(0, 8)[d],
-      // value2: dataReverse2.slice(0, 8)[d],
-      // value3: dataReverse3.slice(0, 8)[d],
+      value1: dataReverse1.slice(0, 8)[d],
+      value2: dataReverse2.slice(0, 8)[d],
+      value3: dataReverse3.slice(0, 8)[d],
     });
   }
 
-  console.log(allData7);
+  // console.log(allData7);
 
   // 30 DAYS
   let allData30 = [];
@@ -228,16 +242,15 @@ const CoinDetails = () => {
         instruction.innerHTML = "You can select max 3";
       }
 
+      setSelect1(idList[0]);
+      setSelect2(idList[1]);
+      setSelect3(idList[2]);
+
       // console.log(idList);
     } catch (err) {
       console.error(err.message);
     }
   };
-
-  // console.log(dataReverse.slice(0, 31));
-  // console.log(priceData);
-  // console.log(allData);
-  //   console.log(allHistoricalData && allHistoricalData.prices);
 
   return (
     <Container maxWidth="lg">
@@ -288,6 +301,11 @@ const CoinDetails = () => {
                 </div>
               </div>
             )}
+
+            {/* ADD COIN TO COMPARE */}
+            {select1 && <Coin1ToCompare coinOneId={select1} />}
+            {select2 && <Coin2ToCompare coinTwoId={select2} />}
+            {select3 && <Coin3ToCompare coinThreeId={select3} />}
           </div>
 
           {/* ALL CHARTS */}
@@ -318,9 +336,9 @@ const CoinDetails = () => {
                   </defs>
 
                   <Area dataKey="value" stroke="#0000ff" fill="url(#color)" />
-                  {/* <Area dataKey="value1" stroke="#6600ff" fill="url(#color)" />
+                  <Area dataKey="value1" stroke="#6600ff" fill="url(#color)" />
                   <Area dataKey="value2" stroke="#ff00ff" fill="url(#color)" />
-                  <Area dataKey="value3" stroke="#ff0066" fill="url(#color)" /> */}
+                  <Area dataKey="value3" stroke="#ff0066" fill="url(#color)" />
 
                   <XAxis
                     dataKey="date"
@@ -337,7 +355,7 @@ const CoinDetails = () => {
                   />
 
                   <YAxis
-                    dataKey="value"
+                    dataKey={Math.max("value", "value1", "value2", "value3")}
                     axisLine={false}
                     tickLine={false}
                     fontSize="0.8em"
