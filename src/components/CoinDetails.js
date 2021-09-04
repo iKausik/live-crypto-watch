@@ -233,11 +233,11 @@ const CoinDetails = () => {
       const instruction = document.getElementById("selectInstruction");
 
       if (idList.length < 3 && item.className === "displayNone") {
-        item.className = "toggleDiv";
         idList.push(itemId);
+        item.className = "toggleDiv";
       } else if (item.className === "toggleDiv") {
-        item.className = "displayNone";
         idList.splice(idList.indexOf(itemId), 1);
+        item.className = "displayNone";
       }
 
       if (idList.length === 1) {

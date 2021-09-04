@@ -196,6 +196,9 @@ body a {
 .PrivateTabIndicator-colorSecondary-3 {
   background-color: #0000ff !important;
 }
+.jss3 {
+  background-color: #0000ff !important;
+}
 
 /* SIDE BAR */
 .sidebarContent {
@@ -209,11 +212,11 @@ body a {
 .toggleDiv {
   width: 100%;
   height: 100%;
-  position: inherit;
-  z-index: 1;
+  position: absolute;
+  z-index: 4;
   border-radius: 1em;
   background-color: #212223;
-  opacity: 86%;
+  opacity: 0.8;
   display: flex;
   flex-direction: row;
   justify-content: center;
