@@ -1,6 +1,6 @@
 # [Live Crypto Watch React App](https://live-crypto-watch.netlify.app/)
 
-An e-commerce application for a fresh, colorful and minimalist look of Nike shopping experience, built with `JavaScript`, `React`, `React-Query`, `React-Router`, `Material-UI`, `Recharts` and `CSS`.
+An web app to track popular crypto currency prices live, updates every minute, built with `JavaScript`, `React`, `React-Query`, `React-Router`, `Material-UI`, `Recharts` and `CSS`.
 
 ## Project Screen Shot(s)
 
