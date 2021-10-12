@@ -4,7 +4,7 @@ An web app to track popular crypto currency prices, updates every minute, built 
 
 ## Project Screen Shot(s)
 
-![Product Page](https://raw.githubusercontent.com/iKausik/live-crypto-watch/master/src/assets/project-b.png)
+![Home Page](https://raw.githubusercontent.com/iKausik/live-crypto-watch/master/src/assets/project-b.png)
 
 ## Installation and Setup Instructions
 
