@@ -136,6 +136,23 @@ const Coins = () => {
     }
   };
 
+  // let timer;
+  // const runReload = () => {
+  //   timer = setTimeout(() => {
+  //     window.location.reload();
+  //   }, 1000);
+  //   return timer;
+  // };
+  // const clearReload = () => {
+  //   clearTimeout(timer);
+  // };
+
+  // useEffect(() => {
+  //   runReload();
+  //   clearTimeout(timer);
+  //   // clearReload();
+  // });
+
   return (
     <Container maxWidth="lg">
       <div className="coinList">
